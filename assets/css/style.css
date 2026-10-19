@@ -497,9 +497,21 @@ p { margin: 0 0 1em; }
 }
 .badge svg { width: 18px; height: 18px; color: var(--orange); }
 
-.tiers .card h3 { color: var(--orange); }
-.tiers ul { padding-left: 18px; margin: 0; color: var(--muted); }
-.tiers li { margin-bottom: 6px; }
+.tier { display: flex; flex-direction: column; }
+.tier h3 { color: var(--orange); margin-bottom: 6px; }
+.tier .price {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(2rem, 7vw, 2.4rem); line-height: 1; margin: 0 0 20px;
+}
+.tier--platinum { border-color: var(--orange); background: linear-gradient(180deg, rgba(255,122,0,0.12), var(--black-3) 60%); }
+.benefits { list-style: none; margin: 0; padding: 0; }
+.benefits li {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 10px 0; border-top: 1px solid var(--line); font-size: 0.92rem;
+}
+.benefits span { color: var(--muted); white-space: nowrap; }
+.benefits strong { text-align: right; font-weight: 600; }
+.benefits strong.no { color: #6d665e; font-weight: 400; }
 
 /* ---------- Page hero (inner pages) ---------- */
 
