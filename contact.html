@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Contact · Deadly FTC #34237</title>
+  <meta name="description" content="Get in touch with Deadly, FTC Team #34237 in Dubai, UAE.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div data-include="header"></div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">Contact</span>
+        <h1>Get in <span class="accent">touch</span></h1>
+        <p class="lead muted">Sponsorship, workshops, joining the team, or just a question about robots: we would love to hear from you.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container contact-layout">
+        <div class="reveal">
+          <ul class="contact-list">
+            <li><span>Email</span><a class="todo" href="mailto:hello@example.com">hello@example.com</a></li>
+            <li><span>Location</span>Dubai, United Arab Emirates</li>
+            <li><span>Team number</span>FTC #34237</li>
+          </ul>
+          <div class="socials" data-socials></div>
+        </div>
+        <!-- This form opens the visitor's email app. For a real inbox-free form, point action at a service like Formspree. -->
+        <form class="form card reveal" action="mailto:hello@example.com" method="post" enctype="text/plain">
+          <div class="field"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+          <div class="field">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic">
+              <option>Sponsorship</option>
+              <option>Workshop or outreach</option>
+              <option>Joining the team</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label for="message">Message</label><textarea id="message" name="message" required></textarea></div>
+          <div><button class="btn" type="submit">Send message</button></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer"></div>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

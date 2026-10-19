@@ -1,0 +1,7 @@
+<!-- Placeholder logo. Replace this file with the real Deadly logo (keep the name logo.svg, or update the path in assets/js/site.js). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <polygon points="32,3 57,17.5 57,46.5 32,61 7,46.5 7,17.5" fill="#0a0a0a" stroke="#ff7a00" stroke-width="3"/>
+  <path d="M21 18h11c8.5 0 14 5.6 14 14s-5.5 14-14 14H21z" fill="#ff7a00"/>
+  <path d="M27.5 24h4.3c4.6 0 7.4 3.1 7.4 8s-2.8 8-7.4 8h-4.3z" fill="#0a0a0a"/>
+  <path d="M29 40l2.5 6 2.5-6zM35 39.4l2 4.6 1.6-5.4z" fill="#0a0a0a"/>
+</svg>
