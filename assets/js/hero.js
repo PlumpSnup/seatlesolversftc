@@ -146,7 +146,7 @@
       const py = h / 2 + y * scale * persp;
       const depth = (1 - z) / 2; // ~0 (far) .. 1 (near)
       ctx.globalAlpha = 0.25 + depth * 0.75;
-      ctx.fillStyle = depth > 0.55 ? "#ffb066" : "#ff7a00";
+      ctx.fillStyle = depth > 0.55 ? "#8af0ff" : "#00dcfc";
       const s = 1.1 + depth * 1.2;
       ctx.fillRect(px - s / 2, py - s / 2, s, s);
     }

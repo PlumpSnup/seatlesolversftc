@@ -50,7 +50,7 @@ function headerHTML() {
   <header class="site-header">
     <div class="container">
       <a class="brand" href="index.html" aria-label="${TEAM.name} home">
-        <img src="assets/img/logo.svg" alt="" width="42" height="42">
+        <img src="assets/img/logo.png" alt="" width="42" height="42">
         <span class="brand-text"><strong>${TEAM.name.toUpperCase()}</strong><span>FTC #${TEAM.number}</span></span>
       </a>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span></button>
@@ -72,9 +72,8 @@ function footerHTML() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <a class="brand" href="index.html">
-            <img src="assets/img/logo.svg" alt="" width="42" height="42">
-            <span class="brand-text"><strong>${TEAM.name.toUpperCase()}</strong><span>FTC #${TEAM.number}</span></span>
+          <a class="footer-logo" href="index.html">
+            <img src="assets/img/logo-full.png" alt="${TEAM.name} logo" width="160" height="139">
           </a>
           <p class="muted" style="margin-top:16px;max-width:34ch">A student-led robotics team from ${TEAM.location}, competing in <em>FIRST</em> Tech Challenge.</p>
           <div class="socials">${socialsHTML()}</div>
