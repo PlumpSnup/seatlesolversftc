@@ -36,6 +36,7 @@ const NAV = [
 // Deadlier has its own versions of these pages; every other page is shared.
 const DEADLIER_PAGES = {
   "index.html": "deadlier.html",
+  "about.html": "deadlier-about.html",
   "robots.html": "deadlier-robots.html",
   "resources.html": "deadlier-resources.html",
   "services.html": "deadlier-services.html",
