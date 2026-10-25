@@ -79,7 +79,7 @@ function headerHTML() {
   <header class="site-header">
     <div class="container">
       <a class="brand" href="${home}" aria-label="${brand.name} home">
-        <img src="assets/img/logo.png" alt="" width="42" height="42">
+        <img src="assets/img/${isDeadlier ? "logo-deadlier.png" : "logo.png"}" alt="" width="42" height="42">
         <span class="brand-text"><strong>${brand.name.toUpperCase()}</strong><span>FTC #${brand.number}</span></span>
       </a>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span></button>

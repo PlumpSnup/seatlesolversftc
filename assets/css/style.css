@@ -172,7 +172,7 @@ p { margin: 0 0 1em; }
   content: ""; width: 8px; height: 8px; border-radius: 50%;
   background: rgb(var(--tab));
 }
-.team-switch a.deadlier { --tab: 255, 42, 61; }
+.team-switch a.deadlier { --tab: 255, 122, 26; }
 .team-switch a:hover { color: var(--text); background: var(--black-3); }
 .team-switch a[aria-current="true"] {
   color: rgb(var(--tab));
@@ -682,18 +682,16 @@ p { margin: 0 0 1em; }
 }
 
 /* ---------- Deadlier theme (sister team) ----------
-   Pages with <html data-team="deadlier"> swap the cyan accent for red.
-   The logo is tinted red until Deadlier has its own. */
+   Pages with <html data-team="deadlier"> swap the cyan accent for orange
+   and use the orange logo files (logo-deadlier.png, logo-full-deadlier.png). */
 
 [data-team="deadlier"] {
-  --cyan: #ff2a3d;
-  --cyan-bright: #ff6b78;
-  --cyan-deep: #b3101f;
-  --cyan-rgb: 255, 42, 61;
-  --tint: #330309;
+  --cyan: #ff7a1a;
+  --cyan-bright: #ffa15c;
+  --cyan-deep: #c25200;
+  --cyan-rgb: 255, 122, 26;
+  --tint: #331905;
 }
-[data-team="deadlier"] .brand img,
-[data-team="deadlier"] .footer-logo img { filter: hue-rotate(165deg) saturate(1.4); }
 
 /* ---------- Placeholder marker (remove once real content is in) ---------- */
 
