@@ -33,6 +33,14 @@ const NAV = [
   { href: "contact.html", label: "Contact" },
 ];
 
+// Deadlier has its own versions of these pages; every other page is shared.
+const DEADLIER_PAGES = {
+  "index.html": "deadlier.html",
+  "robots.html": "deadlier-robots.html",
+  "resources.html": "deadlier-resources.html",
+  "services.html": "deadlier-services.html",
+};
+
 // TODO: replace "#" with your real profile links
 const SOCIALS = [
   { label: "Instagram", href: "#", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>' },
@@ -49,6 +57,7 @@ const current = (location.pathname.split("/").pop() || "index.html").toLowerCase
 const isDeadlier = document.documentElement.dataset.team === "deadlier";
 const brand = isDeadlier ? DEADLIER : TEAM;
 const home = isDeadlier ? "deadlier.html" : "index.html";
+const nav = isDeadlier ? NAV.map((n) => ({ ...n, href: DEADLIER_PAGES[n.href] || n.href })) : NAV;
 
 function socialsHTML() {
   return SOCIALS.map(
@@ -57,7 +66,7 @@ function socialsHTML() {
 }
 
 function headerHTML() {
-  const links = NAV.map(
+  const links = nav.map(
     (n) => `<li><a href="${n.href}"${n.href === current ? ' aria-current="page"' : ""}>${n.label}</a></li>`
   ).join("");
   const tabs = TEAMS.map(
@@ -86,7 +95,7 @@ function headerHTML() {
 
 function footerHTML() {
   const year = new Date().getFullYear();
-  const half = Math.ceil(NAV.length / 2);
+  const half = Math.ceil(nav.length / 2);
   const col = (items) => items.map((n) => `<li><a href="${n.href}">${n.label}</a></li>`).join("");
   return `
   <footer class="site-footer">
@@ -101,8 +110,8 @@ function footerHTML() {
             : `A student-led robotics team from ${TEAM.location}, competing in <em>FIRST</em> Tech Challenge.`}</p>
           <div class="socials">${socialsHTML()}</div>
         </div>
-        <div><h4>Explore</h4><ul>${col(NAV.slice(0, half))}</ul></div>
-        <div><h4>More</h4><ul>${col(NAV.slice(half))}<li><a href="mailto:${TEAM.email}">${TEAM.email}</a></li></ul></div>
+        <div><h4>Explore</h4><ul>${col(nav.slice(0, half))}</ul></div>
+        <div><h4>More</h4><ul>${col(nav.slice(half))}<li><a href="mailto:${TEAM.email}">${TEAM.email}</a></li></ul></div>
       </div>
       <div class="footer-bottom">
         <span>&copy; ${year} ${brand.name} · FTC Team #${brand.number} · ${TEAM.location}</span>

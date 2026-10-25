@@ -193,7 +193,7 @@ p { margin: 0 0 1em; }
   gap: 16px;
 }
 
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
 .brand img { height: 42px; width: auto; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.05; }
 .brand-text strong { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.06em; }
@@ -284,7 +284,7 @@ p { margin: 0 0 1em; }
     justify-content: flex-end;
     transition: none;
   }
-  .nav-links { display: flex; gap: 22px; margin-right: auto; margin-left: 28px; }
+  .nav-links { display: flex; gap: 18px; margin-right: auto; margin-left: 28px; }
   .nav-links a {
     border: 0;
     padding: 6px 0;
@@ -301,6 +301,10 @@ p { margin: 0 0 1em; }
   }
   .nav-links a:hover::after, .nav-links a[aria-current="page"]::after { transform: translateX(-50%) scale(1); }
   .site-nav .btn { min-height: 48px; }
+}
+@media (min-width: 1100px) and (max-width: 1359px) {
+  /* not enough room for the icons next to the menu; they are still in the footer */
+  .site-nav .socials { display: none; }
 }
 
 /* ---------- Hero ---------- */
