@@ -14,6 +14,9 @@ const TEAM = {
 const DEADLIER = {
   name: "Deadlier",
   number: "XXXXX", // TODO: team number once FIRST assigns it
+  // Look for the Deadlier pages: "daycare" (crayon colors + duckling logo)
+  // or "orange" (orange accent + orange dragon logo). Change this one word to switch.
+  look: "daycare",
 };
 
 // Tabs in the strip above the header
@@ -58,6 +61,13 @@ const current = (location.pathname.split("/").pop() || "index.html").toLowerCase
 const isDeadlier = document.documentElement.dataset.team === "deadlier";
 const brand = isDeadlier ? DEADLIER : TEAM;
 const home = isDeadlier ? "deadlier.html" : "index.html";
+document.documentElement.dataset.look = DEADLIER.look;
+// Deadlier logo files; the daycare look uses the *-daycare.png duckling versions
+const dlLogo = (name) => `assets/img/${name}${DEADLIER.look === "daycare" ? "-daycare" : ""}.png`;
+if (isDeadlier) {
+  document.querySelector('link[rel="icon"]')?.setAttribute("href", dlLogo("logo-deadlier"));
+  document.querySelector('link[rel="apple-touch-icon"]')?.setAttribute("href", dlLogo("apple-touch-icon-deadlier"));
+}
 const nav = isDeadlier ? NAV.map((n) => ({ ...n, href: DEADLIER_PAGES[n.href] || n.href })) : NAV;
 
 function socialsHTML() {
@@ -80,7 +90,7 @@ function headerHTML() {
   <header class="site-header">
     <div class="container">
       <a class="brand" href="${home}" aria-label="${brand.name} home">
-        <img src="assets/img/${isDeadlier ? "logo-deadlier.png" : "logo.png"}" alt="" width="42" height="42">
+        <img src="${isDeadlier ? dlLogo("logo-deadlier") : "assets/img/logo.png"}" alt="" width="42" height="42">
         <span class="brand-text"><strong>${brand.name.toUpperCase()}</strong><span>FTC #${brand.number}</span></span>
       </a>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span></button>
@@ -104,7 +114,7 @@ function footerHTML() {
       <div class="footer-grid">
         <div>
           <a class="footer-logo" href="${home}">
-            <img src="${isDeadlier ? "assets/img/logo-full-deadlier.png" : "assets/img/logo-full.png"}" alt="${brand.name} logo" width="160" height="${isDeadlier ? 127 : 139}">
+            <img src="${isDeadlier ? dlLogo("logo-full-deadlier") : "assets/img/logo-full.png"}" alt="${brand.name} logo" width="160" height="${isDeadlier ? 127 : 139}">
           </a>
           <p class="muted" style="margin-top:16px;max-width:34ch">${isDeadlier
             ? `The sister team of ${TEAM.name} #${TEAM.number}, competing in <em>FIRST</em> Tech Challenge from ${TEAM.location}.`
