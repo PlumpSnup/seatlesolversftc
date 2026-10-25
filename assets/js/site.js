@@ -62,7 +62,9 @@ const isDeadlier = document.documentElement.dataset.team === "deadlier";
 const brand = isDeadlier ? DEADLIER : TEAM;
 const home = isDeadlier ? "deadlier.html" : "index.html";
 // A visitor's choice from the switch on the home page wins over DEADLIER.look
-const LOOK_KEY = "deadlierLook";
+// "v2": choices saved before the switch moved to the bottom are ignored, so everyone starts on orange
+const LOOK_KEY = "deadlierLook.v2";
+try { localStorage.removeItem("deadlierLook"); } catch (e) {}
 let look = DEADLIER.look;
 try {
   const saved = localStorage.getItem(LOOK_KEY);
