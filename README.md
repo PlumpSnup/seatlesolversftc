@@ -22,7 +22,7 @@ The website for Deadly, a *FIRST* Tech Challenge team from Dubai, UAE. It is a p
 - **Header, footer, socials and email** are defined once in `assets/js/site.js` (`TEAM`, `NAV` and `SOCIALS`).
 - **Team switcher:** the Deadly / Deadlier tabs above the header come from `TEAMS` in `assets/js/site.js`. Deadlier's number is `DEADLIER.number` (still `XXXXX`); also update it in `deadlier.html`.
 - **Deadlier pages:** on Deadlier pages the menu swaps Home, About, Robots, Resources and Services for Deadlier's versions (`DEADLIER_PAGES` in `site.js`). Impact, Sponsors and Contact are shared.
-- **Deadlier theme:** any page with `<html data-team="deadlier">` uses orange instead of cyan (see the bottom of `style.css`).
+- **Deadlier look:** pages with `<html data-team="deadlier">` use Deadlier's colors. Set `look` in `DEADLIER` (`assets/js/site.js`) to `"daycare"` for crayon colors and the duckling logo, or `"orange"` for the orange dragon logo and accent. Nothing else needs changing to switch back. Visitors can also flip it with the **Deadlier look** switch in the bottom left corner of the home page; their choice is saved in their browser.
 - **Colors and fonts** are CSS variables at the top of `assets/css/style.css`.
 - **Logo:** `assets/img/logo.png` is the icon (header and browser tab), `assets/img/logo-full.png` is the full logo with the wordmark (footer). Deadlier pages use the orange `logo-deadlier.png` and `logo-full-deadlier.png` instead.
 - **Placeholders** have a dashed cyan outline (the `todo` class). Fill in the real content, then remove `todo` from that element.
