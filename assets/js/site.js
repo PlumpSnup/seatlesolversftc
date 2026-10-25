@@ -14,9 +14,6 @@ const TEAM = {
 const DEADLIER = {
   name: "Deadlier",
   number: "XXXXX", // TODO: team number once FIRST assigns it
-  // Look for the Deadlier pages: "daycare" (crayon colors + duckling logo)
-  // or "orange" (orange accent + orange dragon logo). Change this one word to switch.
-  look: "daycare",
 };
 
 // Tabs in the strip above the header
@@ -61,20 +58,6 @@ const current = (location.pathname.split("/").pop() || "index.html").toLowerCase
 const isDeadlier = document.documentElement.dataset.team === "deadlier";
 const brand = isDeadlier ? DEADLIER : TEAM;
 const home = isDeadlier ? "deadlier.html" : "index.html";
-// A visitor's choice from the switch on the home page wins over DEADLIER.look
-const LOOK_KEY = "deadlierLook";
-let look = DEADLIER.look;
-try {
-  const saved = localStorage.getItem(LOOK_KEY);
-  if (saved === "daycare" || saved === "orange") look = saved;
-} catch (e) {}
-document.documentElement.dataset.look = look;
-// Deadlier logo files; the daycare look uses the *-daycare.png duckling versions
-const dlLogo = (name) => `assets/img/${name}${look === "daycare" ? "-daycare" : ""}.png`;
-if (isDeadlier) {
-  document.querySelector('link[rel="icon"]')?.setAttribute("href", dlLogo("logo-deadlier"));
-  document.querySelector('link[rel="apple-touch-icon"]')?.setAttribute("href", dlLogo("apple-touch-icon-deadlier"));
-}
 const nav = isDeadlier ? NAV.map((n) => ({ ...n, href: DEADLIER_PAGES[n.href] || n.href })) : NAV;
 
 function socialsHTML() {
@@ -97,7 +80,7 @@ function headerHTML() {
   <header class="site-header">
     <div class="container">
       <a class="brand" href="${home}" aria-label="${brand.name} home">
-        <img src="${isDeadlier ? dlLogo("logo-deadlier") : "assets/img/logo.png"}" alt="" width="42" height="42">
+        <img src="assets/img/${isDeadlier ? "logo-deadlier.png" : "logo.png"}" alt="" width="42" height="42">
         <span class="brand-text"><strong>${brand.name.toUpperCase()}</strong><span>FTC #${brand.number}</span></span>
       </a>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span></button>
@@ -121,7 +104,7 @@ function footerHTML() {
       <div class="footer-grid">
         <div>
           <a class="footer-logo" href="${home}">
-            <img src="${isDeadlier ? dlLogo("logo-full-deadlier") : "assets/img/logo-full.png"}" alt="${brand.name} logo" width="160" height="${isDeadlier ? 127 : 139}">
+            <img src="${isDeadlier ? "assets/img/logo-full-deadlier.png" : "assets/img/logo-full.png"}" alt="${brand.name} logo" width="160" height="${isDeadlier ? 127 : 139}">
           </a>
           <p class="muted" style="margin-top:16px;max-width:34ch">${isDeadlier
             ? `The sister team of ${TEAM.name} #${TEAM.number}, competing in <em>FIRST</em> Tech Challenge from ${TEAM.location}.`
@@ -142,27 +125,6 @@ function footerHTML() {
 document.querySelectorAll('[data-include="header"]').forEach((el) => (el.outerHTML = headerHTML()));
 document.querySelectorAll('[data-include="footer"]').forEach((el) => (el.outerHTML = footerHTML()));
 document.querySelectorAll("[data-socials]").forEach((el) => (el.innerHTML = socialsHTML()));
-
-/* ---------- Deadlier look switch (home page) ---------- */
-document.querySelectorAll("[data-look-toggle]").forEach((el) => {
-  el.innerHTML = `
-    <span class="look-toggle-label">Deadlier look</span>
-    <span class="look-toggle-opt" data-opt="orange">Original</span>
-    <button type="button" role="switch" class="look-switch" aria-label="Daycare look for the Deadlier pages"><span class="knob"></span></button>
-    <span class="look-toggle-opt" data-opt="daycare">Daycare</span>`;
-  const btn = el.querySelector(".look-switch");
-  const sync = () => {
-    btn.setAttribute("aria-checked", String(look === "daycare"));
-    el.querySelectorAll(".look-toggle-opt").forEach((o) => o.classList.toggle("is-on", o.dataset.opt === look));
-  };
-  btn.addEventListener("click", () => {
-    look = look === "daycare" ? "orange" : "daycare";
-    document.documentElement.dataset.look = look;
-    try { localStorage.setItem(LOOK_KEY, look); } catch (e) {}
-    sync();
-  });
-  sync();
-});
 
 // Add the arrow circle to any .btn that doesn't have one yet
 document.querySelectorAll(".btn:not(.no-arrow)").forEach((b) => {
