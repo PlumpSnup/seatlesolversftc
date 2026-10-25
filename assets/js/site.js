@@ -61,9 +61,16 @@ const current = (location.pathname.split("/").pop() || "index.html").toLowerCase
 const isDeadlier = document.documentElement.dataset.team === "deadlier";
 const brand = isDeadlier ? DEADLIER : TEAM;
 const home = isDeadlier ? "deadlier.html" : "index.html";
-document.documentElement.dataset.look = DEADLIER.look;
+// A visitor's choice from the switch on the home page wins over DEADLIER.look
+const LOOK_KEY = "deadlierLook";
+let look = DEADLIER.look;
+try {
+  const saved = localStorage.getItem(LOOK_KEY);
+  if (saved === "daycare" || saved === "orange") look = saved;
+} catch (e) {}
+document.documentElement.dataset.look = look;
 // Deadlier logo files; the daycare look uses the *-daycare.png duckling versions
-const dlLogo = (name) => `assets/img/${name}${DEADLIER.look === "daycare" ? "-daycare" : ""}.png`;
+const dlLogo = (name) => `assets/img/${name}${look === "daycare" ? "-daycare" : ""}.png`;
 if (isDeadlier) {
   document.querySelector('link[rel="icon"]')?.setAttribute("href", dlLogo("logo-deadlier"));
   document.querySelector('link[rel="apple-touch-icon"]')?.setAttribute("href", dlLogo("apple-touch-icon-deadlier"));
@@ -135,6 +142,27 @@ function footerHTML() {
 document.querySelectorAll('[data-include="header"]').forEach((el) => (el.outerHTML = headerHTML()));
 document.querySelectorAll('[data-include="footer"]').forEach((el) => (el.outerHTML = footerHTML()));
 document.querySelectorAll("[data-socials]").forEach((el) => (el.innerHTML = socialsHTML()));
+
+/* ---------- Deadlier look switch (home page) ---------- */
+document.querySelectorAll("[data-look-toggle]").forEach((el) => {
+  el.innerHTML = `
+    <span class="look-toggle-label">Deadlier look</span>
+    <span class="look-toggle-opt" data-opt="orange">Original</span>
+    <button type="button" role="switch" class="look-switch" aria-label="Daycare look for the Deadlier pages"><span class="knob"></span></button>
+    <span class="look-toggle-opt" data-opt="daycare">Daycare</span>`;
+  const btn = el.querySelector(".look-switch");
+  const sync = () => {
+    btn.setAttribute("aria-checked", String(look === "daycare"));
+    el.querySelectorAll(".look-toggle-opt").forEach((o) => o.classList.toggle("is-on", o.dataset.opt === look));
+  };
+  btn.addEventListener("click", () => {
+    look = look === "daycare" ? "orange" : "daycare";
+    document.documentElement.dataset.look = look;
+    try { localStorage.setItem(LOOK_KEY, look); } catch (e) {}
+    sync();
+  });
+  sync();
+});
 
 // Add the arrow circle to any .btn that doesn't have one yet
 document.querySelectorAll(".btn:not(.no-arrow)").forEach((b) => {
