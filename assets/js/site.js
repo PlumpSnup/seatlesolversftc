@@ -103,7 +103,7 @@ function footerHTML() {
       <div class="footer-grid">
         <div>
           <a class="footer-logo" href="${home}">
-            <img src="assets/img/logo-full.png" alt="${brand.name} logo" width="160" height="139">
+            <img src="${isDeadlier ? "assets/img/logo-full-deadlier.png" : "assets/img/logo-full.png"}" alt="${brand.name} logo" width="160" height="${isDeadlier ? 127 : 139}">
           </a>
           <p class="muted" style="margin-top:16px;max-width:34ch">${isDeadlier
             ? `The sister team of ${TEAM.name} #${TEAM.number}, competing in <em>FIRST</em> Tech Challenge from ${TEAM.location}.`

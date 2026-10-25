@@ -24,7 +24,7 @@ The website for Deadly, a *FIRST* Tech Challenge team from Dubai, UAE. It is a p
 - **Deadlier pages:** on Deadlier pages the menu swaps Home, Robots, Resources and Services for Deadlier's versions (`DEADLIER_PAGES` in `site.js`). About, Impact, Sponsors and Contact are shared.
 - **Deadlier theme:** any page with `<html data-team="deadlier">` uses red instead of cyan (see the bottom of `style.css`).
 - **Colors and fonts** are CSS variables at the top of `assets/css/style.css`.
-- **Logo:** `assets/img/logo.png` is the icon (header and browser tab), `assets/img/logo-full.png` is the full logo with the wordmark (footer).
+- **Logo:** `assets/img/logo.png` is the icon (header and browser tab), `assets/img/logo-full.png` is the full logo with the wordmark (footer). Deadlier pages use `assets/img/logo-full-deadlier.png` instead.
 - **Placeholders** have a dashed cyan outline (the `todo` class). Fill in the real content, then remove `todo` from that element.
 - **Team members:** in `about.html`, put photos in `assets/img/team/` and replace the `?` in each card with `<img src="assets/img/team/name.jpg" alt="Name">`.
 - **Background photos:** see the comments above the hero and "Who we are" sections in `index.html`.
