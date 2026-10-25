@@ -7,6 +7,8 @@
   --cyan: #00dcfc;
   --cyan-bright: #66ebff;
   --cyan-deep: #0098b0;
+  --cyan-rgb: 0, 220, 252;
+  --tint: #032a33;
   --black: #0a0a0a;
   --black-2: #121212;
   --black-3: #1b1b1b;
@@ -21,6 +23,7 @@
   --gutter: 16px;
   --max: 1240px;
   --header-h: 64px;
+  --switch-h: 34px;
   --radius: 4px;
 }
 
@@ -145,12 +148,39 @@ p { margin: 0 0 1em; }
 
 .btn-row { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
 
-/* ---------- Header ---------- */
+/* ---------- Team switcher + header ---------- */
+
+.site-top { position: sticky; top: 0; z-index: 50; }
+
+.team-switch {
+  height: var(--switch-h);
+  background: var(--black);
+  border-bottom: 1px solid var(--line);
+}
+.team-switch .container { height: 100%; display: flex; gap: 4px; }
+.team-switch a {
+  --tab: 0, 220, 252;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 14px;
+  font-family: var(--font-mono); font-weight: 700; font-size: 0.72rem;
+  letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, background 0.2s;
+}
+.team-switch a::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: rgb(var(--tab));
+}
+.team-switch a.deadlier { --tab: 255, 42, 61; }
+.team-switch a:hover { color: var(--text); background: var(--black-3); }
+.team-switch a[aria-current="true"] {
+  color: rgb(var(--tab));
+  border-bottom-color: rgb(var(--tab));
+  background: rgba(var(--tab), 0.08);
+}
 
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
   height: var(--header-h);
   background: rgba(10, 10, 10, 0.97);
   border-bottom: 1px solid var(--line);
@@ -191,7 +221,7 @@ p { margin: 0 0 1em; }
 
 .site-nav {
   position: fixed;
-  inset: var(--header-h) 0 0 0;
+  inset: calc(var(--switch-h) + var(--header-h)) 0 0 0;
   background: var(--black);
   padding: 24px var(--gutter) 40px;
   display: flex;
@@ -254,7 +284,7 @@ p { margin: 0 0 1em; }
     justify-content: flex-end;
     transition: none;
   }
-  .nav-links { display: flex; gap: 22px; margin-right: auto; margin-left: 40px; }
+  .nav-links { display: flex; gap: 22px; margin-right: auto; margin-left: 28px; }
   .nav-links a {
     border: 0;
     padding: 6px 0;
@@ -277,7 +307,7 @@ p { margin: 0 0 1em; }
 
 .hero {
   position: relative;
-  min-height: calc(100svh - var(--header-h));
+  min-height: calc(100svh - var(--switch-h) - var(--header-h));
   display: flex;
   align-items: center;
   padding: 48px 0 64px;
@@ -288,7 +318,7 @@ p { margin: 0 0 1em; }
   position: absolute; inset: 0; z-index: -1;
   background:
     linear-gradient(90deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 55%, rgba(10,10,10,0.55) 100%),
-    radial-gradient(ellipse at 75% 40%, rgba(0, 220, 252, 0.18), transparent 60%),
+    radial-gradient(ellipse at 75% 40%, rgba(var(--cyan-rgb), 0.18), transparent 60%),
     var(--hero-photo, none) center / cover no-repeat,
     var(--black);
   filter: saturate(0.6);
@@ -323,8 +353,8 @@ p { margin: 0 0 1em; }
   margin: 0 auto;
   border-radius: 50%;
   border: 2px solid var(--cyan);
-  background: radial-gradient(circle at 50% 45%, rgba(0, 220, 252, 0.22), rgba(0,30,38,0.85) 70%);
-  box-shadow: 0 0 80px rgba(0, 220, 252, 0.18), inset 0 0 60px rgba(0,0,0,0.6);
+  background: radial-gradient(circle at 50% 45%, rgba(var(--cyan-rgb), 0.22), rgba(0,30,38,0.85) 70%);
+  box-shadow: 0 0 80px rgba(var(--cyan-rgb), 0.18), inset 0 0 60px rgba(0,0,0,0.6);
   overflow: hidden;
   touch-action: pan-y;
   cursor: grab;
@@ -430,11 +460,13 @@ p { margin: 0 0 1em; }
 .card:hover { border-color: var(--cyan); transform: translateY(-3px); }
 .card .icon {
   width: 48px; height: 48px; display: grid; place-items: center;
-  background: rgba(0, 220, 252, 0.12); color: var(--cyan);
+  background: rgba(var(--cyan-rgb), 0.12); color: var(--cyan);
   border-radius: var(--radius); margin-bottom: 18px;
 }
 .card .icon svg { width: 24px; height: 24px; }
 .card p:last-child { margin-bottom: 0; }
+.card ul { margin: 0; padding-left: 18px; }
+.card li + li { margin-top: 6px; }
 .card .tag {
   display: inline-block; font-family: var(--font-mono); font-size: 0.72rem;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan);
@@ -446,7 +478,7 @@ p { margin: 0 0 1em; }
 .member { text-align: left; padding: 0; overflow: hidden; }
 .member .photo {
   aspect-ratio: 1;
-  background: linear-gradient(135deg, #032a33, #111);
+  background: linear-gradient(135deg, var(--tint), #111);
   display: grid; place-items: center;
   font-family: var(--font-display); font-size: 2.6rem; color: var(--cyan);
   overflow: hidden;
@@ -475,7 +507,7 @@ p { margin: 0 0 1em; }
 .sponsor-slot {
   aspect-ratio: 3 / 2;
   display: grid; place-items: center;
-  border: 1px dashed rgba(0, 220, 252, 0.4);
+  border: 1px dashed rgba(var(--cyan-rgb), 0.4);
   border-radius: var(--radius);
   color: var(--muted);
   font-family: var(--font-mono);
@@ -487,7 +519,11 @@ p { margin: 0 0 1em; }
   text-decoration: none;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
-.sponsor-slot:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0, 220, 252, 0.05); }
+.sponsor-slot:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(var(--cyan-rgb), 0.05); }
+.sponsor-slot--name {
+  border-style: solid; border-color: var(--line);
+  color: var(--text); font-size: 0.85rem; font-weight: 700;
+}
 .sponsor-slot img { max-height: 70%; width: auto; filter: grayscale(1) brightness(1.6); transition: filter 0.2s; }
 .sponsor-slot:hover img { filter: none; }
 
@@ -503,7 +539,7 @@ p { margin: 0 0 1em; }
   font-family: var(--font-display); font-weight: 800;
   font-size: clamp(2rem, 7vw, 2.4rem); line-height: 1; margin: 0 0 20px;
 }
-.tier--platinum { border-color: var(--cyan); background: linear-gradient(180deg, rgba(0, 220, 252, 0.12), var(--black-3) 60%); }
+.tier--platinum { border-color: var(--cyan); background: linear-gradient(180deg, rgba(var(--cyan-rgb), 0.12), var(--black-3) 60%); }
 .benefits { list-style: none; margin: 0; padding: 0; }
 .benefits li {
   display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
@@ -513,13 +549,27 @@ p { margin: 0 0 1em; }
 .benefits strong { text-align: right; font-weight: 600; }
 .benefits strong.no { color: #5f686d; font-weight: 400; }
 
+/* ---------- Budget breakdown ---------- */
+
+.budget { display: grid; gap: 16px; }
+@media (min-width: 760px) { .budget { grid-template-columns: repeat(2, 1fr); } }
+.budget .card h3 { display: flex; justify-content: space-between; gap: 12px; }
+.budget .card h3 span { color: var(--cyan); }
+.bar { height: 6px; background: var(--black); border-radius: 3px; margin: 4px 0 16px; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--cyan); }
+
+.quote {
+  font-size: clamp(1.15rem, 3vw, 1.5rem); font-weight: 600; line-height: 1.4;
+  margin: 0 0 12px; max-width: 34ch;
+}
+
 /* ---------- Page hero (inner pages) ---------- */
 
 .page-hero {
   padding: clamp(56px, 12vw, 110px) 0 clamp(40px, 8vw, 70px);
   border-bottom: 1px solid var(--line);
   background:
-    radial-gradient(ellipse at 85% 0%, rgba(0, 220, 252, 0.2), transparent 55%),
+    radial-gradient(ellipse at 85% 0%, rgba(var(--cyan-rgb), 0.2), transparent 55%),
     var(--black);
 }
 .page-hero h1 { font-size: clamp(2.3rem, 9vw, 5rem); }
@@ -594,10 +644,24 @@ p { margin: 0 0 1em; }
   color: var(--muted); font-size: 0.85rem;
 }
 
+/* ---------- Deadlier theme (sister team) ----------
+   Pages with <html data-team="deadlier"> swap the cyan accent for red.
+   The logo is tinted red until Deadlier has its own. */
+
+[data-team="deadlier"] {
+  --cyan: #ff2a3d;
+  --cyan-bright: #ff6b78;
+  --cyan-deep: #b3101f;
+  --cyan-rgb: 255, 42, 61;
+  --tint: #330309;
+}
+[data-team="deadlier"] .brand img,
+[data-team="deadlier"] .footer-logo img { filter: hue-rotate(165deg) saturate(1.4); }
+
 /* ---------- Placeholder marker (remove once real content is in) ---------- */
 
 .todo {
-  outline: 1px dashed rgba(0, 220, 252, 0.55);
+  outline: 1px dashed rgba(var(--cyan-rgb), 0.55);
   outline-offset: 4px;
 }
 

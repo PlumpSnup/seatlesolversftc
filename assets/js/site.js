@@ -10,6 +10,18 @@ const TEAM = {
   email: "hello@example.com", // TODO: real team email
 };
 
+// Sister team. Its page (deadlier.html) sets <html data-team="deadlier">.
+const DEADLIER = {
+  name: "Deadlier",
+  number: "XXXXX", // TODO: team number once FIRST assigns it
+};
+
+// Tabs in the strip above the header
+const TEAMS = [
+  { href: "index.html", label: `${TEAM.name} #${TEAM.number}`, cls: "deadly" },
+  { href: "deadlier.html", label: `${DEADLIER.name} #${DEADLIER.number}`, cls: "deadlier" },
+];
+
 const NAV = [
   { href: "index.html", label: "Home" },
   { href: "about.html", label: "About" },
@@ -34,6 +46,9 @@ const ARROW = '<span class="arrow" aria-hidden="true"><svg viewBox="0 0 16 16" f
 document.documentElement.classList.remove("no-js");
 
 const current = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+const isDeadlier = document.documentElement.dataset.team === "deadlier";
+const brand = isDeadlier ? DEADLIER : TEAM;
+const home = isDeadlier ? "deadlier.html" : "index.html";
 
 function socialsHTML() {
   return SOCIALS.map(
@@ -45,13 +60,18 @@ function headerHTML() {
   const links = NAV.map(
     (n) => `<li><a href="${n.href}"${n.href === current ? ' aria-current="page"' : ""}>${n.label}</a></li>`
   ).join("");
+  const tabs = TEAMS.map(
+    (t) => `<a class="${t.cls}" href="${t.href}"${(t.cls === "deadlier") === isDeadlier ? ' aria-current="true"' : ""}>${t.label}</a>`
+  ).join("");
   return `
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-top">
+  <nav class="team-switch" aria-label="Teams"><div class="container">${tabs}</div></nav>
   <header class="site-header">
     <div class="container">
-      <a class="brand" href="index.html" aria-label="${TEAM.name} home">
+      <a class="brand" href="${home}" aria-label="${brand.name} home">
         <img src="assets/img/logo.png" alt="" width="42" height="42">
-        <span class="brand-text"><strong>${TEAM.name.toUpperCase()}</strong><span>FTC #${TEAM.number}</span></span>
+        <span class="brand-text"><strong>${brand.name.toUpperCase()}</strong><span>FTC #${brand.number}</span></span>
       </a>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main">
@@ -60,7 +80,8 @@ function headerHTML() {
         <a class="btn" href="sponsors.html#become">Sponsor us ${ARROW}</a>
       </nav>
     </div>
-  </header>`;
+  </header>
+  </div>`;
 }
 
 function footerHTML() {
@@ -72,17 +93,19 @@ function footerHTML() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <a class="footer-logo" href="index.html">
-            <img src="assets/img/logo-full.png" alt="${TEAM.name} logo" width="160" height="139">
+          <a class="footer-logo" href="${home}">
+            <img src="assets/img/logo-full.png" alt="${brand.name} logo" width="160" height="139">
           </a>
-          <p class="muted" style="margin-top:16px;max-width:34ch">A student-led robotics team from ${TEAM.location}, competing in <em>FIRST</em> Tech Challenge.</p>
+          <p class="muted" style="margin-top:16px;max-width:34ch">${isDeadlier
+            ? `The sister team of ${TEAM.name} #${TEAM.number}, competing in <em>FIRST</em> Tech Challenge from ${TEAM.location}.`
+            : `A student-led robotics team from ${TEAM.location}, competing in <em>FIRST</em> Tech Challenge.`}</p>
           <div class="socials">${socialsHTML()}</div>
         </div>
         <div><h4>Explore</h4><ul>${col(NAV.slice(0, half))}</ul></div>
         <div><h4>More</h4><ul>${col(NAV.slice(half))}<li><a href="mailto:${TEAM.email}">${TEAM.email}</a></li></ul></div>
       </div>
       <div class="footer-bottom">
-        <span>&copy; ${year} ${TEAM.name} · FTC Team #${TEAM.number} · ${TEAM.location}</span>
+        <span>&copy; ${year} ${brand.name} · FTC Team #${brand.number} · ${TEAM.location}</span>
         <span><em>FIRST</em>&reg; and FIRST&reg; Tech Challenge are trademarks of <em>FIRST</em>.</span>
       </div>
     </div>

@@ -14,10 +14,13 @@ The website for Deadly, a *FIRST* Tech Challenge team from Dubai, UAE. It is a p
 | `services.html` | Workshops, mentoring and classes |
 | `sponsors.html` | Sponsor logos and sponsorship tiers |
 | `contact.html` | Contact details and form |
+| `deadlier.html` | Deadlier, our sister team (red theme) |
 
 ## Editing
 
 - **Header, footer, socials and email** are defined once in `assets/js/site.js` (`TEAM`, `NAV` and `SOCIALS`).
+- **Team switcher:** the Deadly / Deadlier tabs above the header come from `TEAMS` in `assets/js/site.js`. Deadlier's number is `DEADLIER.number` (still `XXXXX`); also update it in `deadlier.html`.
+- **Deadlier theme:** any page with `<html data-team="deadlier">` uses red instead of cyan (see the bottom of `style.css`).
 - **Colors and fonts** are CSS variables at the top of `assets/css/style.css`.
 - **Logo:** `assets/img/logo.png` is the icon (header and browser tab), `assets/img/logo-full.png` is the full logo with the wordmark (footer).
 - **Placeholders** have a dashed cyan outline (the `todo` class). Fill in the real content, then remove `todo` from that element.
