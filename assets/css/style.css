@@ -528,6 +528,12 @@ p { margin: 0 0 1em; }
   border-style: solid; border-color: var(--line);
   color: var(--text); font-size: 0.85rem; font-weight: 700;
 }
+/* a person rather than a company: round photo with the name under it */
+.sponsor-slot--person { align-content: center; gap: 8px; }
+.sponsor-slot.sponsor-slot--person img {
+  width: clamp(48px, 34%, 96px); height: auto; max-height: none; aspect-ratio: 1; object-fit: cover;
+  border-radius: 50%; border: 2px solid var(--cyan); filter: none;
+}
 .sponsor-slot img { max-height: 70%; width: auto; filter: grayscale(1) brightness(1.6); transition: filter 0.2s; }
 .sponsor-slot:hover img { filter: none; }
 
