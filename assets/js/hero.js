@@ -29,6 +29,12 @@
   controls.maxPolarAngle = Math.PI * 0.49;
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 1.2;
+  // On touch screens dragging would block page scrolling, so the robot just turns by itself there
+  if (matchMedia("(pointer: coarse)").matches) {
+    controls.enabled = false;
+    const hint = canvas.parentElement.querySelector(".hint");
+    if (hint) hint.hidden = true;
+  }
 
   // Meshes are only shapes to scatter dots over; they are never drawn themselves
   const M = () => new THREE.MeshBasicMaterial({ visible: false });
