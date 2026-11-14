@@ -1,170 +1,249 @@
 /* =========================================================
-   Hero "point cloud" robot — a rotating 3D dot model of a
-   generic FTC robot with the team number on the front.
-   Drag (mouse or touch) to rotate.
+   Hero 3D robot — "Buzzbot", the bee-shaped BIOBUZZ concept
+   robot (from the Buzzbot 3D artifact), drawn with three.js
+   as a cloud of single-color dots, like the original hero.
+   The model is built from ordinary meshes, then every mesh
+   is swapped for dots scattered over its surface. The intake
+   and flywheels spin, pollen launches, the wings flap and the
+   robot slowly turns. Drag to rotate.
    ========================================================= */
 
 (() => {
-  const canvas = document.getElementById("robot-cloud");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  const TEAM_NUMBER = "34237";
+  const canvas = document.getElementById("robot-3d");
+  if (!canvas || !window.THREE || !THREE.OrbitControls) return;
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const pts = [];
-  const add = (x, y, z) => pts.push([x, y, z]);
-  const jitter = () => (Math.random() - 0.5) * 0.015;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  // dots further from the camera fade into the frame's dark teal, for depth
+  scene.fog = new THREE.Fog(0x03232b, 44, 86);
+  const DOT_COLOR = new THREE.Color(0x00dcfc);
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 500);
+  camera.position.set(34, 21, 39);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.target.set(0, 6, 0);
+  controls.enableDamping = true;
+  controls.enableZoom = false; // keep page scrolling working
+  controls.enablePan = false;
+  controls.maxPolarAngle = Math.PI * 0.49;
+  controls.autoRotate = !reduceMotion;
+  controls.autoRotateSpeed = 1.2;
 
-  function line(a, b, n) {
-    for (let i = 0; i <= n; i++) {
-      const t = i / n;
-      add(a[0] + (b[0] - a[0]) * t + jitter(), a[1] + (b[1] - a[1]) * t + jitter(), a[2] + (b[2] - a[2]) * t + jitter());
+  // Meshes are only shapes to scatter dots over; they are never drawn themselves
+  const M = () => new THREE.MeshBasicMaterial({ visible: false });
+  const add = (mesh, parent = scene) => { parent.add(mesh); return mesh; };
+
+  /* floor: a faint grid of dots, like field tiles */
+  const floorPts = [];
+  for (let x = -24; x <= 24; x += 2) for (let z = -24; z <= 24; z += 2) if (x * x + z * z <= 24 * 24) floorPts.push(x, 0, z);
+  const floorGeo = new THREE.BufferGeometry();
+  floorGeo.setAttribute("position", new THREE.Float32BufferAttribute(floorPts, 3));
+  scene.add(new THREE.Points(floorGeo, new THREE.PointsMaterial({ color: DOT_COLOR, size: 0.28, transparent: true, opacity: 0.35, depthWrite: false })));
+
+  const bot = new THREE.Group();
+  scene.add(bot);
+
+  /* chassis + mecanum wheels */
+  add(new THREE.Mesh(new THREE.BoxGeometry(15, 1.4, 13), M()), bot).position.set(0, 3.4, 0);
+  [[5.2, 6.7], [5.2, -6.7], [-5.2, 6.7], [-5.2, -6.7]].forEach(([x, z]) => {
+    const w = new THREE.Group();
+    w.position.set(x, 2.1, z);
+    bot.add(w);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(2.1, 2.1, 1.5, 24), M()), w).rotation.x = Math.PI / 2;
+    for (let i = 0; i < 9; i++) {
+      const r = add(new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.9, 10), M()), w);
+      const a = (i / 9) * Math.PI * 2;
+      r.position.set(Math.cos(a) * 2.05, Math.sin(a) * 2.05, 0);
+      r.rotation.set(0, (x * z > 0 ? 1 : -1) * Math.PI / 4, a + Math.PI / 2);
     }
-  }
-
-  function box(x0, x1, y0, y1, z0, z1, density) {
-    const c = [
-      [x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0],
-      [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1],
-    ];
-    const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
-    edges.forEach(([a, b]) => {
-      const len = Math.hypot(c[a][0]-c[b][0], c[a][1]-c[b][1], c[a][2]-c[b][2]);
-      line(c[a], c[b], Math.round(len * density));
-    });
-  }
-
-  function circle(cx, cy, cz, r, plane, n) {
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2;
-      const u = Math.cos(a) * r, v = Math.sin(a) * r;
-      if (plane === "yz") add(cx + jitter(), cy + u, cz + v);
-      else add(cx + u, cy + v, cz + jitter());
-    }
-  }
-
-  // Chassis (y grows downward)
-  box(-1, 1, 0.15, 0.6, -0.7, 0.7, 70);
-  // Inner rails
-  line([-1, 0.38, -0.7], [1, 0.38, -0.7], 90);
-  line([-1, 0.38, 0.7], [1, 0.38, 0.7], 90);
-  // Wheels (mecanum-ish)
-  [[-1.06, -0.48], [-1.06, 0.48], [1.06, -0.48], [1.06, 0.48]].forEach(([x, z]) => {
-    circle(x, 0.6, z, 0.2, "yz", 46);
-    circle(x, 0.6, z, 0.12, "yz", 26);
   });
-  // Lift tower with truss bracing
-  box(-0.55, 0.55, -0.75, 0.15, -0.35, 0.35, 50);
-  for (let i = 0; i < 4; i++) {
-    const y0 = -0.75 + i * 0.225, y1 = y0 + 0.225;
-    line([-0.55, y0, 0.35], [0.55, y1, 0.35], 30);
-    line([-0.55, y1, -0.35], [0.55, y0, -0.35], 30);
+
+  /* striped abdomen */
+  const body = add(new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), M()), bot);
+  // stripes as bright and dim bands of dots: 8 bands from end to end of the body
+  body.userData.shade = (p) => (Math.floor((Math.acos(Math.max(-1, Math.min(1, p.y))) / Math.PI) * 8) % 2 ? 0.35 : 1);
+  body.rotation.z = Math.PI / 2;
+  body.scale.set(4.6, 7.2, 5.6);
+  body.position.set(-0.8, 8.6, 0);
+
+  /* stinger */
+  const sting = add(new THREE.Mesh(new THREE.ConeGeometry(0.9, 3, 16), M()), bot);
+  sting.rotation.z = Math.PI / 2;
+  sting.position.set(-9.2, 8.4, 0);
+
+  /* head, camera eyes, antennae */
+  add(new THREE.Mesh(new THREE.SphereGeometry(3.1, 32, 24), M()), bot).position.set(6.6, 8.2, 0);
+  [-1.5, 1.5].forEach((z) => {
+    add(new THREE.Mesh(new THREE.SphereGeometry(1.05, 24, 16), M()), bot).position.set(8.9, 8.9, z);
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 12), M()), bot).position.set(9.85, 9.0, z);
+    const ant = add(new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 4, 8), M()), bot);
+    ant.position.set(7.9, 12.4, z * 0.9);
+    ant.rotation.set(z * 0.12, 0, -0.35);
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 10), M()), bot).position.set(8.6, 14.3, z * 1.15);
+  });
+
+  /* intake roller + side plates */
+  const intake = new THREE.Group();
+  intake.position.set(8.7, 2.3, 0);
+  bot.add(intake);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 13, 10), M()), intake).rotation.x = Math.PI / 2;
+  for (let i = -5; i <= 5; i++) {
+    const fw = add(new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.25, 0.7, 6), M()), intake);
+    fw.rotation.x = Math.PI / 2;
+    fw.position.z = i * 1.15;
   }
-  // Intake roller / arm on top
-  circle(0, -0.95, 0, 0.22, "xy", 50);
-  line([0, -0.75, 0], [0, -0.73 - 0.22, 0], 8);
-  line([-0.7, -0.78, 0.55], [0.7, -0.78, 0.55], 60);
+  [-6.8, 6.8].forEach((z) => {
+    add(new THREE.Mesh(new THREE.BoxGeometry(4.2, 3, 0.25), M()), bot).position.set(7.8, 3.1, z);
+  });
 
-  // Team number on the front face, sampled from an offscreen canvas
-  const off = document.createElement("canvas");
-  off.width = 400; off.height = 100;
-  const octx = off.getContext("2d");
-  octx.fillStyle = "#fff";
-  octx.font = "800 84px Orbitron, Arial Black, sans-serif";
-  octx.textAlign = "center";
-  octx.textBaseline = "middle";
+  /* flywheel shooter + hood */
+  const shooter = new THREE.Group();
+  shooter.position.set(-2.6, 14.2, 0);
+  bot.add(shooter);
+  add(new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.5, 6.2), M()), shooter).position.y = -1.9;
+  const flywheels = [-1.9, 1.9].map((z) => {
+    const fw = add(new THREE.Mesh(new THREE.CylinderGeometry(1.9, 1.9, 0.9, 32), M()), shooter);
+    fw.rotation.x = Math.PI / 2;
+    fw.position.z = z;
+    add(new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.3, 0.95), M()), fw);
+    return fw;
+  });
+  const hood = add(new THREE.Mesh(
+    new THREE.CylinderGeometry(3, 3, 2.6, 24, 1, true, Math.PI * 0.05, Math.PI * 0.6),
+    M()
+  ), shooter);
+  hood.rotation.x = Math.PI / 2;
+  hood.position.set(0.3, 0.4, 0);
 
-  function sampleText() {
-    octx.clearRect(0, 0, off.width, off.height);
-    octx.fillText(TEAM_NUMBER, off.width / 2, off.height / 2 + 4);
-    const data = octx.getImageData(0, 0, off.width, off.height).data;
-    const textPts = [];
-    for (let y = 0; y < off.height; y += 2) {
-      for (let x = 0; x < off.width; x += 2) {
-        if (data[(y * off.width + x) * 4 + 3] > 128) {
-          textPts.push([(x / off.width - 0.5) * 1.85, 0.55 + (y / off.height - 0.5) * 0.44, 0.72]);
-        }
-      }
+  /* lexan wings */
+  const wings = [-1, 1].map((s) => {
+    const pivot = new THREE.Group();
+    pivot.position.set(-1.2, 12.6, s * 2.6);
+    bot.add(pivot);
+    const wg = new THREE.Mesh(new THREE.CircleGeometry(1, 40), M());
+    wg.scale.set(4.4, 1.8, 1);
+    wg.rotation.set(-Math.PI / 2, 0, 0);
+    wg.position.set(-2.4, 0, s * 3.6);
+    pivot.add(wg);
+    pivot.userData.s = s;
+    return pivot;
+  });
+
+  /* pollen moving up the belly, then launched along an arc */
+  const pollenMat = M();
+  const belly = [[5.5, 4.6], [3, 5.6], [0.6, 7.4], [-1.6, 9.6]].map(([x, y]) => {
+    const p = add(new THREE.Mesh(new THREE.SphereGeometry(1.25, 20, 16), pollenMat), bot);
+    p.position.set(x, y, 0);
+    p.visible = false;
+    return p;
+  });
+  const shot = add(new THREE.Mesh(new THREE.SphereGeometry(1.5, 24, 18), pollenMat), bot);
+  const trailPts = [];
+  for (let t = 0; t <= 1; t += 0.02) trailPts.push(new THREE.Vector3(-2.6 - t * 22, 16 + 18 * t - 22 * t * t, 0));
+  const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints(trailPts), new THREE.LineDashedMaterial({ color: DOT_COLOR, dashSize: 0.3, gapSize: 0.9, transparent: true, opacity: 0.7 }));
+  trail.computeLineDistances();
+  bot.add(trail);
+
+  /* swap every mesh for dots: rows of dots along its edges and outlines,
+     plus a light sprinkle over its surfaces for volume */
+  scene.updateMatrixWorld(true);
+  const meshes = [];
+  bot.traverse((o) => o.isMesh && meshes.push(o));
+  const EDGE_GAP = 0.45;   // world units between dots along an edge
+  const FILL_DOTS = 1600;  // surface dots for the whole robot
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), ab = new THREE.Vector3(), ac = new THREE.Vector3();
+  const wa = new THREE.Vector3(), wb = new THREE.Vector3();
+  const shadeOf = (mesh, p) => (mesh.userData.shade ? mesh.userData.shade(p) : 1);
+
+  const surfaces = meshes.map((mesh) => {
+    const geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry;
+    const pos = geo.attributes.position;
+    const list = [];
+    let total = 0;
+    for (let i = 0; i < pos.count; i += 3) {
+      // area in world units, so scaled shapes (like the body) get their fair share of dots
+      a.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld);
+      b.fromBufferAttribute(pos, i + 1).applyMatrix4(mesh.matrixWorld);
+      c.fromBufferAttribute(pos, i + 2).applyMatrix4(mesh.matrixWorld);
+      total += ab.subVectors(b, a).cross(ac.subVectors(c, a)).length() / 2;
+      list.push(total);
     }
-    return textPts;
-  }
+    return { pos, list, total };
+  });
+  const fillDensity = FILL_DOTS / surfaces.reduce((sum, t) => sum + t.total, 0);
 
-  // Re-center the model vertically so it rotates around its middle
-  pts.forEach((p) => (p[1] += 0.18));
-  const basePts = pts.slice();
-  let allPts = basePts.concat(sampleText());
-  // Resample once the web font has loaded so the digits match the site font
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.load("800 84px Orbitron").then(() => { allPts = basePts.concat(sampleText()); }).catch(() => {});
-  }
+  meshes.forEach((mesh, m) => {
+    const pts = [], cols = [];
+    const put = (p) => {
+      const k = shadeOf(mesh, p);
+      pts.push(p.x, p.y, p.z);
+      cols.push(DOT_COLOR.r * k, DOT_COLOR.g * k, DOT_COLOR.b * k);
+    };
+    // edges: a 3 degree threshold keeps the outlines and a sphere's rings, not the triangle seams
+    const edges = new THREE.EdgesGeometry(mesh.geometry, 3).attributes.position;
+    for (let i = 0; i < edges.count; i += 2) {
+      a.fromBufferAttribute(edges, i);
+      b.fromBufferAttribute(edges, i + 1);
+      wa.copy(a).applyMatrix4(mesh.matrixWorld);
+      wb.copy(b).applyMatrix4(mesh.matrixWorld);
+      const steps = Math.max(1, Math.round(wa.distanceTo(wb) / EDGE_GAP));
+      for (let k = 0; k < steps; k++) put(c.copy(a).lerp(b, k / steps));
+    }
+    // surface sprinkle: pick a triangle weighted by area, then a random point inside it
+    const { pos, list, total } = surfaces[m];
+    const n = Math.round(total * fillDensity);
+    for (let k = 0; k < n; k++) {
+      const r = Math.random() * total;
+      let lo = 0, hi = list.length - 1;
+      while (lo < hi) { const mid = (lo + hi) >> 1; if (list[mid] < r) lo = mid + 1; else hi = mid; }
+      let u = Math.random(), v = Math.random();
+      if (u + v > 1) { u = 1 - u; v = 1 - v; }
+      const i = lo * 3;
+      a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, i + 1); c.fromBufferAttribute(pos, i + 2);
+      put(a.clone().addScaledVector(ab.subVectors(b, a), u).addScaledVector(ac.subVectors(c, a), v));
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(cols, 3));
+    // the dots ride along with their mesh, so moving parts keep moving
+    mesh.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 0.26, vertexColors: true })));
+  });
 
-  let w = 0, h = 0, dpr = 1;
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const r = canvas.getBoundingClientRect();
-    w = r.width; h = r.height;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  new ResizeObserver(resize).observe(canvas);
-  resize();
-
-  let rotY = -0.45, rotX = -0.3, velY = reduceMotion ? 0 : 0.004;
-  let dragging = false, lastX = 0, lastY = 0, idleSince = 0;
-
-  canvas.addEventListener("pointerdown", (e) => {
-    dragging = true; lastX = e.clientX; lastY = e.clientY;
-    canvas.setPointerCapture(e.pointerId);
-  });
-  canvas.addEventListener("pointermove", (e) => {
-    if (!dragging) return;
-    const dx = e.clientX - lastX, dy = e.clientY - lastY;
-    lastX = e.clientX; lastY = e.clientY;
-    rotY += dx * 0.01;
-    rotX = Math.max(-1.1, Math.min(0.6, rotX - dy * 0.01));
-    if (!running) draw();
-  });
-  const end = () => { dragging = false; idleSince = performance.now(); };
-  canvas.addEventListener("pointerup", end);
-  canvas.addEventListener("pointercancel", end);
-
-  function draw() {
-    ctx.clearRect(0, 0, w, h);
-    const cy = Math.cos(rotY), sy = Math.sin(rotY);
-    const cx = Math.cos(rotX), sx = Math.sin(rotX);
-    const scale = w * 0.3, fov = 3.2;
-    for (let i = 0; i < allPts.length; i++) {
-      const p = allPts[i];
-      // rotate around Y, then X
-      let x = p[0] * cy - p[2] * sy;
-      let z = p[0] * sy + p[2] * cy;
-      let y = p[1] * cx - z * sx;
-      z = p[1] * sx + z * cx;
-      const persp = fov / (fov + z);
-      const px = w / 2 + x * scale * persp;
-      const py = h / 2 + y * scale * persp;
-      const depth = (1 - z) / 2; // ~0 (far) .. 1 (near)
-      ctx.globalAlpha = 0.25 + depth * 0.75;
-      ctx.fillStyle = depth > 0.55 ? "#8af0ff" : "#00dcfc";
-      const s = 1.1 + depth * 1.2;
-      ctx.fillRect(px - s / 2, py - s / 2, s, s);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    const pr = renderer.getPixelRatio();
+    if (canvas.width !== Math.floor(w * pr) || canvas.height !== Math.floor(h * pr)) {
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
     }
-    ctx.globalAlpha = 1;
   }
 
-  let running = false, visible = true;
-  function loop() {
-    if (!visible) { running = false; return; }
-    running = true;
-    if (!dragging && performance.now() - idleSince > 1200) rotY += velY;
-    draw();
-    requestAnimationFrame(loop);
+  const clock = new THREE.Clock();
+  let cycle = 0;
+  function frame() {
+    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+    resize();
+    if (!reduceMotion) {
+      intake.rotation.z -= dt * 14;
+      flywheels.forEach((f, i) => (f.rotation.y += (i ? -1 : 1) * dt * 30));
+      cycle = (cycle + dt / 2.4) % 1;
+      wings.forEach((w) => (w.rotation.x = w.userData.s * Math.sin(t * 22) * 0.22));
+    }
+    belly.forEach((p, i) => (p.visible = !reduceMotion && cycle < 0.5 && cycle * 8 > i && cycle * 8 < i + 1.2));
+    if (cycle >= 0.5) {
+      const k = (cycle - 0.5) / 0.5;
+      shot.position.copy(trailPts[Math.min(trailPts.length - 1, Math.floor(k * (trailPts.length - 1)))]);
+      shot.visible = true;
+    } else {
+      shot.position.set(-2.6, 16, 0);
+      shot.visible = cycle > 0.42;
+    }
+    trail.visible = !reduceMotion;
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
   }
-
-  new IntersectionObserver(([e]) => {
-    visible = e.isIntersecting;
-    if (!visible || running) return;
-    if (reduceMotion) draw(); else loop();
-  }).observe(canvas);
+  frame();
 })();

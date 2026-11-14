@@ -403,6 +403,9 @@ p { margin: 0 0 1em; }
   /* sits beside the text, above the stats row */
   .section-logo-bg { background-position: right 6% top 9%; background-size: auto 60%; opacity: 0.55; }
 }
+/* Deadlier pages show Deadlier's own logo (the duckling with the daycare look) */
+[data-team="deadlier"] .section-logo-bg { background-image: url("../img/logo-deadlier.png"); }
+[data-team="deadlier"][data-look="daycare"] .section-logo-bg { background-image: url("../img/logo-deadlier-daycare.png"); }
 /* darken toward the text so it stays readable */
 .section--logo::after {
   content: ""; position: absolute; inset: 0; z-index: -1;

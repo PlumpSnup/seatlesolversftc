@@ -6,7 +6,7 @@ The website for Deadly, a *FIRST* Tech Challenge team from Dubai, UAE. It is a p
 
 | File | Page |
 | --- | --- |
-| `index.html` | Home: hero with the 3D robot, who we are, stats, sponsors |
+| `index.html` | Home: hero with the 3D Buzzbot robot (`assets/js/hero.js`, three.js), who we are, stats, sponsors |
 | `about.html` | Story, mission and team members |
 | `impact.html` | Outreach and events |
 | `robots.html` | Current robot, subsystems, competition results |

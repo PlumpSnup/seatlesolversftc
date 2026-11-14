@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="hero-visual">
-          <canvas id="robot-cloud" aria-label="Rotating 3D point-cloud model of a robot showing team number 34237" role="img"></canvas>
+          <canvas id="robot-3d" aria-label="Rotating 3D model of Buzzbot, a bee-shaped FTC robot with an intake, flywheel shooter and wings" role="img"></canvas>
           <span class="hint">Drag to rotate</span>
         </div>
       </div>
@@ -144,6 +144,9 @@
   <!-- Switches the Deadlier pages between the original orange look and the daycare look -->
   <div class="look-toggle" data-look-toggle></div>
   <script src="assets/js/site.js"></script>
+  <!-- three.js r128 (MIT), kept in the repo so the 3D robot doesn't depend on a CDN -->
+  <script src="assets/js/vendor/three.min.js"></script>
+  <script src="assets/js/vendor/OrbitControls.js"></script>
   <script src="assets/js/hero.js"></script>
 </body>
 </html>
