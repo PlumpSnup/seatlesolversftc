@@ -392,6 +392,25 @@ p { margin: 0 0 1em; }
   filter: saturate(0.6);
 }
 
+/* Section with the big Deadly logo faded in behind it (home page "Who we are") */
+.section--logo { isolation: isolate; overflow: hidden; background: var(--black); }
+.section-logo-bg {
+  position: absolute; inset: 0; z-index: -2;
+  background: url("../img/logo.png") no-repeat right -12% top 40px / min(78vw, 360px) auto;
+  opacity: 0.22;
+}
+@media (min-width: 960px) {
+  /* sits beside the text, above the stats row */
+  .section-logo-bg { background-position: right 6% top 9%; background-size: auto 60%; opacity: 0.55; }
+}
+/* darken toward the text so it stays readable */
+.section--logo::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.75) 45%, rgba(10, 10, 10, 0.15) 100%),
+    radial-gradient(ellipse at 80% 50%, rgba(var(--cyan-rgb), 0.12), transparent 60%);
+}
+
 .section-head { max-width: 760px; margin-bottom: 40px; }
 
 .prose { max-width: 620px; }
@@ -509,6 +528,7 @@ p { margin: 0 0 1em; }
 @media (min-width: 640px) { .sponsor-grid { grid-template-columns: repeat(3, 1fr); } }
 
 .sponsor-slot {
+  min-width: 0;
   aspect-ratio: 3 / 2;
   display: grid; place-items: center;
   border: 1px dashed rgba(var(--cyan-rgb), 0.4);
@@ -531,7 +551,7 @@ p { margin: 0 0 1em; }
 /* a person rather than a company: round photo with the name under it */
 .sponsor-slot--person { align-content: center; gap: 8px; }
 .sponsor-slot.sponsor-slot--person img {
-  width: clamp(48px, 34%, 96px); height: auto; max-height: none; aspect-ratio: 1; object-fit: cover;
+  width: clamp(48px, 13vw, 96px); height: auto; max-height: none; aspect-ratio: 1; object-fit: cover;
   border-radius: 50%; border: 2px solid var(--cyan); filter: none;
 }
 .sponsor-slot img { max-height: 70%; width: auto; filter: grayscale(1) brightness(1.6); transition: filter 0.2s; }
