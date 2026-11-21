@@ -14,6 +14,7 @@ const TEAM = {
 const DEADLIER = {
   name: "Deadlier",
   number: "39698",
+  email: "deadlierftc@gmail.com",
   // Double-clicking Deadlier's number on its pages swaps every copy of it to this one (and back)
   altNumber: "67676",
   // Look for the Deadlier pages: "daycare" (crayon colors + duckling logo)
@@ -133,7 +134,7 @@ function footerHTML() {
           <div class="socials">${socialsHTML()}</div>
         </div>
         <div><h4>Explore</h4><ul>${col(nav.slice(0, half))}</ul></div>
-        <div><h4>More</h4><ul>${col(nav.slice(half))}<li><a href="mailto:${TEAM.email}">${TEAM.email}</a></li></ul></div>
+        <div><h4>More</h4><ul>${col(nav.slice(half))}<li><a href="mailto:${brand.email}">${brand.email}</a></li></ul></div>
       </div>
       <div class="footer-bottom">
         <span>&copy; ${year} ${brand.name} · FTC Team #${isDeadlier ? `<span data-dl-number>${brand.number}</span>` : brand.number} · ${TEAM.location}</span>
