@@ -20,7 +20,7 @@ The website for Deadly, a *FIRST* Tech Challenge team from Dubai, UAE. It is a p
 ## Editing
 
 - **Header, footer, socials and email** are defined once in `assets/js/site.js` (`TEAM`, `NAV` and `SOCIALS`).
-- **Team switcher:** the Deadly / Deadlier tabs above the header come from `TEAMS` in `assets/js/site.js`. Deadlier's number is `DEADLIER.number` (still `XXXXX`); also update it in `deadlier.html`.
+- **Team switcher:** the Deadly / Deadlier tabs above the header come from `TEAMS` in `assets/js/site.js`. Deadlier's number is `DEADLIER.number` (39698); it also appears in `deadlier.html` and the Deadlier page titles. Double-clicking it on a Deadlier page swaps every copy to `DEADLIER.altNumber` (67676) and back.
 - **Deadlier pages:** on Deadlier pages the menu swaps Home, About, Robots, Resources and Services for Deadlier's versions (`DEADLIER_PAGES` in `site.js`). Impact, Sponsors and Contact are shared.
 - **Deadlier look:** pages with `<html data-team="deadlier">` use Deadlier's colors. Set `look` in `DEADLIER` (`assets/js/site.js`) to `"daycare"` for crayon colors and the duckling logo, or `"orange"` for the orange dragon logo and accent. Nothing else needs changing to switch back. Visitors can also flip it with the **Deadlier look** switch in the bottom left corner of the home page; their choice is saved in their browser.
 - **Colors and fonts** are CSS variables at the top of `assets/css/style.css`.

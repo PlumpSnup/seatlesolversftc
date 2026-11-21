@@ -13,7 +13,9 @@ const TEAM = {
 // Sister team. Its page (deadlier.html) sets <html data-team="deadlier">.
 const DEADLIER = {
   name: "Deadlier",
-  number: "XXXXX", // TODO: team number once FIRST assigns it
+  number: "39698",
+  // Double-clicking Deadlier's number on its pages swaps every copy of it to this one (and back)
+  altNumber: "67676",
   // Look for the Deadlier pages: "daycare" (crayon colors + duckling logo)
   // or "orange" (orange accent + orange dragon logo). Change this one word to switch.
   look: "orange",
@@ -22,7 +24,7 @@ const DEADLIER = {
 // Tabs in the strip above the header
 const TEAMS = [
   { href: "index.html", label: `${TEAM.name} #${TEAM.number}`, cls: "deadly" },
-  { href: "deadlier.html", label: `${DEADLIER.name} #${DEADLIER.number}`, cls: "deadlier" },
+  { href: "deadlier.html", label: `<span>${DEADLIER.name} #<span data-dl-number>${DEADLIER.number}</span></span>`, cls: "deadlier" },
 ];
 
 const NAV = [
@@ -100,7 +102,7 @@ function headerHTML() {
     <div class="container">
       <a class="brand" href="${home}" aria-label="${brand.name} home">
         <img src="${isDeadlier ? dlLogo("logo-deadlier") : "assets/img/logo.png"}" alt="" width="42" height="42">
-        <span class="brand-text"><strong>${brand.name.toUpperCase()}</strong><span>FTC #${brand.number}</span></span>
+        <span class="brand-text"><strong>${brand.name.toUpperCase()}</strong><span>FTC #${isDeadlier ? `<span data-dl-number>${brand.number}</span>` : brand.number}</span></span>
       </a>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main">
@@ -134,7 +136,7 @@ function footerHTML() {
         <div><h4>More</h4><ul>${col(nav.slice(half))}<li><a href="mailto:${TEAM.email}">${TEAM.email}</a></li></ul></div>
       </div>
       <div class="footer-bottom">
-        <span>&copy; ${year} ${brand.name} · FTC Team #${brand.number} · ${TEAM.location}</span>
+        <span>&copy; ${year} ${brand.name} · FTC Team #${isDeadlier ? `<span data-dl-number>${brand.number}</span>` : brand.number} · ${TEAM.location}</span>
         <span><em>FIRST</em>&reg; and FIRST&reg; Tech Challenge are trademarks of <em>FIRST</em>.</span>
       </div>
     </div>
@@ -144,6 +146,17 @@ function footerHTML() {
 document.querySelectorAll('[data-include="header"]').forEach((el) => (el.outerHTML = headerHTML()));
 document.querySelectorAll('[data-include="footer"]').forEach((el) => (el.outerHTML = footerHTML()));
 document.querySelectorAll("[data-socials]").forEach((el) => (el.innerHTML = socialsHTML()));
+
+/* ---------- Deadlier number swap ---------- */
+// Double-clicking Deadlier's number (anywhere it isn't a link) swaps all of them on the page
+document.addEventListener("dblclick", (e) => {
+  const hit = e.target.closest("[data-dl-number]");
+  if (!hit || hit.closest("a")) return;
+  const next = hit.textContent.trim() === DEADLIER.number ? DEADLIER.altNumber : DEADLIER.number;
+  const prev = next === DEADLIER.number ? DEADLIER.altNumber : DEADLIER.number;
+  document.querySelectorAll("[data-dl-number]").forEach((el) => (el.textContent = next));
+  document.title = document.title.replace(prev, next);
+});
 
 /* ---------- Deadlier look switch (home page) ---------- */
 document.querySelectorAll("[data-look-toggle]").forEach((el) => {

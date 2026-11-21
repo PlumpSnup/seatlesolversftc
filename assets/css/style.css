@@ -832,6 +832,9 @@ p { margin: 0 0 1em; }
 }
 .look-switch[aria-checked="true"] .knob { transform: translateX(20px); }
 
+/* Deadlier's number: no text selection flash when it's double-clicked to swap */
+[data-dl-number] { user-select: none; -webkit-user-select: none; }
+
 /* ---------- Placeholder marker (remove once real content is in) ---------- */
 
 .todo {
